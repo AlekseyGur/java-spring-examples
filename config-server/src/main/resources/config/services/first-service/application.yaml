@@ -1,0 +1,6 @@
+server:
+  port: 8081
+
+custom:
+  label:
+    value: first_service
