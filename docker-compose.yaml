@@ -1,0 +1,29 @@
+services:
+  keycloak_postgres:
+    image: postgres:16
+    container_name: keycloak_postgres
+    env_file:
+      - keycloak.env
+    volumes:
+      - ./keycloak_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak_server
+    env_file:
+      - keycloak.env
+    volumes:
+      - ./keycloak-themes:/opt/keycloak/themes
+    ports:
+      - "8080:8080"
+      - "5005:5005" # только отладки
+      - "9000:9000" # панель администратора
+    command:
+      - start-dev # исправить на start для боевой среды
+    depends_on:
+      - keycloak_postgres
+
+volumes:
+  keycloak_data:
