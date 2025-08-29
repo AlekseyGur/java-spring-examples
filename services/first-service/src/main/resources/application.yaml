@@ -1,0 +1,66 @@
+server:
+  port: 8081 # ноль - случайный пустой порт
+
+spring:
+  application:
+    name: first-service
+  config:
+    import: "configserver:"
+  cloud:
+    config:
+      fail-fast: true
+      discovery:
+        enabled: true
+        service-id: config-server
+      retry:
+        useRandomPolicy: true
+        max-interval: 6000
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 2000
+            readTimeout: 2000
+            loggerLevel: BASIC
+            # NONE — логирование отключено
+            # BASIC — базовый уровень (запросы и ответы)
+            # HEADERS — включает логирование заголовков
+            # FULL — полное логирование запросов и ответов
+      circuitbreaker:
+        enabled: true
+        alphanumeric-ids:
+          enabled: true
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    healthcheck:
+      enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka/
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        enabled: true
+        slidingWindowSize: 3
+        failureRateThreshold: 2 # % неудачных срабатываний для открытия
+        waitDurationInOpenState: 10s
+        minimumNumberOfCalls: 2 # минимально необходимое количество успешных вызовов API перед началом анализа уровня отказа
+
+
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,circuitbreakers
+
+logging:
+  level:
+    root: INFO
+    com.github.resilience4j: DEBUG
+    org.springframework.web: DEBUG
