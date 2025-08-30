@@ -1,3 +1,3 @@
 # java-spring-kafka
 
-Заготовка для kafka (через org.apache)
+Заготовка для kafka (через org.springframework.kafka)

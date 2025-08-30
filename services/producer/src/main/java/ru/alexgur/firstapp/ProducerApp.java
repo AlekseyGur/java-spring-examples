@@ -9,12 +9,7 @@ public class ProducerApp {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(ProducerApp.class, args);
-
-//        KafkaProducerClient kafka = context.getBean(KafkaProducerClient.class);
-//        kafka.start();
-//        var kafka = context.getBean(KafkaProducerServiceImpl.class);
-//        kafka.send("text ===================");
-
-        KafkaApacheProducer.start();
+        KafkaProducer kafka = context.getBean(KafkaProducer.class);
+        kafka.start();
     }
 }
