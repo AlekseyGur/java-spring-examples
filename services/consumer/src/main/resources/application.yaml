@@ -17,4 +17,4 @@ spring:
       client-id: consumers-demo
       group-id: consumers-group-1
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: ru.alexgur.kafka.deserializer.UserDeserializer

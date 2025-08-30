@@ -11,4 +11,4 @@ spring:
       topic: kafka-demo-1
       number-of-producers: 1
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: ru.alexgur.kafka.serializer.GeneralAvroSerializer
