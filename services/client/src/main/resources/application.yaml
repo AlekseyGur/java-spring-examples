@@ -1,0 +1,12 @@
+server:
+  port: 8086
+
+# Настройки grpc (этот сервис будет отправлять запросы)
+grpc:
+  client:
+    demo-app:
+      address: localhost:9095
+      # address: discovery:///producer
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext # PLAINTEXT или SSL

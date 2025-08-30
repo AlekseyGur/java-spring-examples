@@ -1,3 +1,3 @@
-# java-spring-kafka
+# java-grpc-protobuf
 
-Заготовка для kafka (через org.springframework.kafka) с передачей данных в формате avro
+Заготовка для обмена данными между сервисами по grpc в формате protobuf

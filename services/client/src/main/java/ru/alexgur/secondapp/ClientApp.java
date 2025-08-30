@@ -1,15 +1,17 @@
 package ru.alexgur.secondapp;
 
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
-public class ConsumerApp {
+public class ClientApp {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(ConsumerApp.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(ClientApp.class, args);
+
+        GrpcSender grpcSender = context.getBean(GrpcSender.class);
+        grpcSender.sendAction();
     }
 
 }
