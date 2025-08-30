@@ -1,0 +1,10 @@
+@namespace("ru.alexgur.avro")
+
+protocol User {
+	record UserAvro {
+		int id;
+		string name;
+		boolean active;
+		timestamp_ms timestamp;
+	}
+}

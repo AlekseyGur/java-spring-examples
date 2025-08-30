@@ -6,8 +6,9 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import ru.alexgur.kafka.User.UserAvro;
+import ru.alexgur.avro.UserAvro;
 
+import java.time.Instant;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -42,7 +43,12 @@ public class KafkaProducer {
                         String messageKey = "key" + keyIdx;
 
                         int magicNumber = ThreadLocalRandom.current().nextInt(0, 100);
-                        UserAvro data = new UserAvro("Alex", 30, "test@test.test");
+                        UserAvro data = new UserAvro(
+                                1,
+                                "Alex",
+                                true,
+                                Instant.now()
+                        );
 
                         ProducerRecord<String, UserAvro> message =
                                 new ProducerRecord<>(sendClientTopic,
