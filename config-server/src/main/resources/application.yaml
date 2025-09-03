@@ -16,8 +16,10 @@ spring:
 
 # регистрируем сам cloud-config в eureka
 eureka:
+  instance:
+    instanceId: config-server
   client:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka/
+      defaultZone: http://${eureka.instance.hostname:discovery-server}:${eureka.instance.port:8761}/eureka/

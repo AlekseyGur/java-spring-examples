@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: first-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: first-service
+  template:
+    metadata:
+      labels:
+        app: first-service
+    spec:
+      containers:
+      - name: first-service
+        image: first-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        resources:
+          limits:
+            memory: "1024Mi"  # Максимальный объем памяти
+            cpu: "1"          # Максимальное количество CPU (1 ядро)
+          requests:
+            memory: "512Mi"   # Запрашиваемый объем памяти
+            cpu: "0.5"        # Запрашиваемое количество CPU (половина ядра)
+        env:
+          - name: EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE
+            value: "http://discovery-server:8761/eureka/"

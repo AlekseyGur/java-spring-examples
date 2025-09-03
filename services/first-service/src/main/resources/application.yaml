@@ -1,5 +1,5 @@
 server:
-  port: 0 # ноль - случайный пустой порт
+  port: 8080 # ноль - случайный пустой порт
 
 spring:
   application:
@@ -18,6 +18,7 @@ spring:
 
 eureka:
   instance:
+    prefer-ip-address: true
     instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
     healthcheck:
@@ -25,4 +26,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka/
+      defaultZone: http://${eureka.instance.hostname:discovery-server}:${eureka.instance.port:8761}/eureka/

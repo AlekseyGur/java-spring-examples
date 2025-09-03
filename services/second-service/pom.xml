@@ -54,6 +54,10 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<!-- для создания исполняемого jar -->
+					<executable>true</executable>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
