@@ -11,6 +11,7 @@ sh mvnw clean package
 
 # запускаем готовую систему kubernates
 minikube start
+minikube addons enable ingress
 
 # В отдельном терминале прописываем переменные окружения 
 # minikube для доступа через docker команду
@@ -23,8 +24,8 @@ docker build -t first-service:latest ./services/first-service
 docker build -t second-service:latest ./services/second-service
 
 # проверяем загруженные в minikube образы и запущенные контейнеры
-docker images
-docker ps -a
+# docker images
+# docker ps -a
 
 # Если не выполнять eval $(minikube docker-env), то можно скопировать
 # образы в миникуб все образы так:
@@ -35,36 +36,40 @@ docker ps -a
 
 # применяем конфиги Kubernetes и запускаем контейнеры
 kubectl create namespace my-microservice # создать пространство имен
+
 # 1 важность
 kubectl apply -f ./k8s/services/discovery-server/ -n my-microservice
+
 # 2 важность
 kubectl apply -f ./k8s/services/config-server/ -n my-microservice
+
 # 3 важность
 kubectl apply -f ./k8s/services/first-service/ -n my-microservice
-# kubectl apply -f ./k8s/services/second-service/ -n my-microservice
+kubectl apply -f ./k8s/services/second-service/ -n my-microservice
+
 # 4 важность
-kubectl apply -f ./k8s/ingress/ -n my-microservice
+kubectl apply -f ./k8s/ingress/deployment.yaml -n my-microservice
+kubectl apply -f ./k8s/ingress/service.yaml -n my-microservice
 
 # проверяем результат
-kubectl get pods -n my-microservice
-kubectl get services -n my-microservice
-kubectl get all -n my-microservice
+# kubectl get pods -n my-microservice
+# kubectl get services -n my-microservice
+# kubectl get all -n my-microservice
+# kubectl get networkpolicy -n my-microservice
 
-# останавливаем и удаляем окружение
-# minikube stop
-# minikube delete
+# проверяем гейт
+# kubectl describe ingress allow-config-access -n my-microservice
+
+# пробрасываем порт от родительской машины к машине внутри кластера
+# kubectl port-forward svc/discovery-server 8761:8761 -n my-microservice
+
+# включаем доступы к ингресу извне
+# kubectl expose deployment web --type=NodePort --port=8080
+# #смотрим какие порты открыл ingress-nginx-controller
+# kubectl get svc -n ingress-nginx
 
 # Проверяем установку. Узнаём ip кластера
-minikube ip
-
-
-# останавливаем и удаляем окружение
-# minikube stop
-# minikube delete
-kubectl delete deployments --all -n my-microservice
-kubectl delete ingress --all -n my-microservice
-kubectl delete pods --all -n my-microservice
-kubectl delete services --all -n my-microservice
+# minikube ip
 
 # Удаление всех подов
 # kubectl delete pods --all -n my-microservice
@@ -83,3 +88,7 @@ kubectl delete services --all -n my-microservice
 
 # Удаление всех jobs (если есть)
 # kubectl delete jobs --all -n my-microservice
+
+# останавливаем и удаляем окружение
+# minikube stop
+# minikube delete

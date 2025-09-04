@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: second-service
+  namespace: my-microservice
 spec:
   replicas: 1
   selector:
@@ -17,11 +18,11 @@ spec:
         image: second-service:latest
         imagePullPolicy: Never
         ports:
-        - containerPort: 8080
+        - containerPort: 80
         livenessProbe:
           httpGet:
             path: /actuator/health
-            port: 8080
+            port: 80
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 10
@@ -34,5 +35,7 @@ spec:
             memory: "512Mi"   # Запрашиваемый объем памяти
             cpu: "0.5"        # Запрашиваемое количество CPU (половина ядра)
         env:
-          - name: EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE
-            value: "http://discovery-server:8761/eureka/"
+          - name: DISCOVERY_SERVER_URL
+            value: http://discovery-server:8761/eureka/
+          - name: SERVER_PORT
+            value: "80"

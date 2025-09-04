@@ -1,41 +1,36 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: my-ingress
+  name: ingress-nginx-deployment
+  namespace: my-microservice
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
+  ingressClassName: nginx
   rules:
-    - host: first-service
-      http:
+    - http:
         paths:
           - path: /first-service(/|$)(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: first-service
                 port:
-                  number: 8080
-
-    - host: second-service
-      http:
-        paths:
+                  number: 80
+                  
           - path: /second-service(/|$)(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: second-service
                 port:
-                  number: 8080
-
-    - host: discovery-server
-      http:
-        paths:
+                  number: 80
+                  
           - path: /discovery-server(/|$)(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: discovery-server
                 port:
-                  number: 8080
+                  number: 8761

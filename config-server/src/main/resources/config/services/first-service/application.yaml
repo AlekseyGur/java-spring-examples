@@ -1,6 +1,6 @@
-server:
-  port: 8080
+# server:
+#   port: 8081
 
-custom:
-  label:
-    value: first_service
+# custom:
+#   label:
+#     value: first_service

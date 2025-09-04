@@ -1,5 +1,5 @@
 server:
-  port: 8080 # ноль - случайный пустой порт
+  port: ${SERVER_PORT:8082} # ноль - случайный пустой порт
 
 spring:
   application:
@@ -8,17 +8,16 @@ spring:
     import: "configserver:"
   cloud:
     config:
+      uri: http://config-server:8888
       fail-fast: true
       discovery:
-        enabled: true
-        service-id: config-server
+        enabled: false # отключаем по причине, указанной в README
       retry:
         useRandomPolicy: true
         max-interval: 6000
 
 eureka:
   instance:
-    prefer-ip-address: true
     instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
     healthcheck:
@@ -26,4 +25,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname:discovery-server}:${eureka.instance.port:8761}/eureka/
+      defaultZone: ${DISCOVERY_SERVER_URL:"http://localhost:8888/eureka/"}
