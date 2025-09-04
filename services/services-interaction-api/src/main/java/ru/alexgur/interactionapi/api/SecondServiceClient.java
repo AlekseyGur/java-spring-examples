@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import ru.alexgur.interactionapi.dto.ResponceDto;
 
-@FeignClient(name = "second-service"
+@FeignClient(name = "second-service", url = "http://second-service"
 // , fallback = SecondServiceClientFallback.class
 )
 public interface SecondServiceClient {
