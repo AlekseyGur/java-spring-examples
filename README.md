@@ -1,4 +1,4 @@
-# spring-k8s-ingress
+# k8s-ingress-cloud-config-eureka-feign
 
 Заготовка для gateway на базе k8s-ingress + Spring Cloud Config и Eureka
 
