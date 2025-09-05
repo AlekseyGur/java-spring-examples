@@ -1,7 +1,12 @@
 # основные настройки и правила gateway находятся в configserver
 
 server:
-  port: 8080
+  port: 8088
+
+
+logging:
+  level:
+    root: DEBUG
 
 spring:
   application:
@@ -22,16 +27,15 @@ spring:
         enabled: true
         serviceId: config-server
 
-# регистрируем сам cloud-config в eureka
 eureka:
   instance:
-    preferIpAddress: true
-    hostname: localhost
-    instance-id: "${spring.application.name}:${random.value}"
-    leaseRenewalIntervalInSeconds: 10
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
+    healthcheck:
+      enabled: true
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}:8761/eureka/
+      defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka/
+
 

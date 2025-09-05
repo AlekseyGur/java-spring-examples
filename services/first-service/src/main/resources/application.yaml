@@ -26,3 +26,7 @@ eureka:
     fetch-registry: true
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka/
+
+logging:
+  level:
+    root: DEBUG
