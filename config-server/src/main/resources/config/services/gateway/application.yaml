@@ -20,6 +20,7 @@ spring:
             - Path=/first-service/**
           filters:
             - StripPrefix=1
+            - CircuitBreaker=myCircuitBreaker # требует pom зависимости
 
         - id: second_service_route
           # Префикс lb активирует балансировщика нагрузки, учитывая адреса сервисов из DiscoveryClient
