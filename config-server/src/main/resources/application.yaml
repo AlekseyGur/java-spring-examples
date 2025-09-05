@@ -12,6 +12,7 @@ spring:
         native:
           searchLocations:
             - classpath:config/common.yaml
+            - classpath:config/gateway.yaml
             - classpath:config/services/{application}
 
 # регистрируем сам cloud-config в eureka
