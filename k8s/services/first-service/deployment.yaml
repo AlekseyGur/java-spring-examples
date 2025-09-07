@@ -35,7 +35,5 @@ spec:
             memory: "512Mi"   # Запрашиваемый объем памяти
             cpu: "0.5"        # Запрашиваемое количество CPU (половина ядра)
         env:
-          - name: DISCOVERY_SERVER_URL
-            value: http://discovery-server:8761/eureka/
-          - name: SERVER_PORT
-            value: "80"
+          - name: CONSUL_SERVER
+            value: "consul-server"

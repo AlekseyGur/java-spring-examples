@@ -13,11 +13,19 @@ services:
       # - ./configs:/consul/config # или так
     command: >
       agent
+      -server
+      -bootstrap
       -client=0.0.0.0
+      -data-dir=/tmp/consul-data
+      -ui
+      -bind=0.0.0.0
       -config-dir=/consul/config
-    # -dev # настройки профиля
-    # или так:
-    # command: agent -dev -client=0.0.0.0 -config-dir=/consul/config
+    # -server: Определяет, что узел действует как сервер.
+    # -bootstrap: Включает начальное размещение, предназначенное для одиночных экземпляров.
+    # -client=0.0.0.0: Разрешает подключение клиентов извне.
+    # -data-dir=/tmp/consul-data: Указывает каталог хранения данных.
+    # -ui: Включает веб-интерфейс управления Consul: http://localhost:8500/ui/
+    # -bind=0.0.0.0: Обеспечивает привязку ко всем интерфейсам.
 
   first-service:
     container_name: first-service

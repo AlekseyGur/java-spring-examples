@@ -1,10 +1,11 @@
 package ru.alexgur.interactionapi.api;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.alexgur.interactionapi.dto.ResponceDto;
 
-@FeignClient(name = "second-service", url = "http://second-service"
+@FeignClient(name = "second-service"
 // , fallback = SecondServiceClientFallback.class
 )
 public interface SecondServiceClient {

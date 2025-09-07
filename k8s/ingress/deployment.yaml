@@ -26,11 +26,11 @@ spec:
                 name: second-service
                 port:
                   number: 80
-                  
-          - path: /discovery-server(/|$)(.*)
+
+          - path: /(.*)
             pathType: ImplementationSpecific
             backend:
               service:
-                name: discovery-server
+                name: consul-server
                 port:
-                  number: 8761
+                  number: 8500

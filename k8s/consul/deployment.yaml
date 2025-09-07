@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consul-server
+  labels:
+    app: consul-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consul-server
+  template:
+    metadata:
+      labels:
+        app: consul-server
+    spec:
+      containers:
+        - name: consul
+          image: hashicorp/consul:latest
+          ports:
+            - containerPort: 8500
+            - containerPort: 8600
+              protocol: UDP
+          command: [ "consul",
+                     "agent",
+                     "-server",
+                     "-bootstrap",
+                     "-client=0.0.0.0",
+                     "-ui",
+                     "-bind=0.0.0.0",
+                     "-config-dir=/consul/config",
+                     "-data-dir=/tmp/consul-data" ]
+          volumeMounts:
+            - name: config-volume
+              mountPath: /consul/config
+
+      volumes:
+        - name: config-volume
+          hostPath:
+            path: /tmp/consul/config # замените на реальный путь

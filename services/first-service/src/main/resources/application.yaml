@@ -1,79 +1,30 @@
 server:
-  port: 8081 # ноль - случайный пустой порт
+  port: ${SERVER_PORT:8081} # ноль - случайный пустой порт
 
 spring:
+  config:
+    import: "consul:"
   application:
     name: first-service
-  config:
-    import: "configserver:"
   cloud:
-    config:
-      uri: http://config-server:8888
-      fail-fast: true
+    consul:
+      host: ${CONSUL_SERVER:localhost}
+      port: 8500
       discovery:
-        enabled: false # отключаем по причине, указанной в README
-      retry:
-        useRandomPolicy: true
-        max-interval: 6000
-    openfeign:
-      client:
-        config:
-          default:
-            connectTimeout: 5000
-            readTimeout: 5000
-            loggerLevel: FULL
-            # NONE — логирование отключено
-            # BASIC — базовый уровень (запросы и ответы)
-            # HEADERS — включает логирование заголовков
-            # FULL — полное логирование запросов и ответов
-      # circuitbreaker:
-      #   enabled: true
-      #   alphanumeric-ids:
-      #     enabled: true
-
-eureka:
-  instance:
-    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  client:
-    healthcheck:
-      enabled: true
-    register-with-eureka: true
-    fetch-registry: true
-    serviceUrl:
-      defaultZone: ${DISCOVERY_SERVER_URL:"http://localhost:8888/eureka/"}
-
-# resilience4j:
-#   circuitbreaker:
-#     configs:
-#       default:
-#         enabled: true
-#         slidingWindowSize: 3
-#         failureRateThreshold: 2 # % неудачных срабатываний для открытия
-#         waitDurationInOpenState: 10s
-#         minimumNumberOfCalls: 2 # минимально необходимое количество успешных вызовов API перед началом анализа уровня отказа
-
-
-# actuator
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,circuitbreakers
-
-logging:
-  level:
-    root: INFO
-    com.github.resilience4j: DEBUG
-    org.springframework.web: DEBUG
-    feign: DEBUG
-    feign.client: DEBUG
-    feign.codec: DEBUG
-    org.springframework.cloud.netflix.feign: DEBUG
-
-feign:
-  logger:
-    level: FULL
-  client:
-    config:
-      default:
-        loggerLevel: FULL
+        health-check-timeout: 10s
+        enabled: true
+        #   Можно следующие две строки не указывать - тогда instance-id
+        #   сгенерирует сам консул:
+        #   instance-id: ${spring.application.name}-${random.uuid}
+        #   service-name: ${spring.application.name}
+#      config:
+#        format: YAML
+#        prefix: config
+#        data-key: application
+#        name: ${spring.application.name}
+#        label: default
+#        import: |
+#          config/common.yaml
+#          config/services/${spring.application.name}.yaml
+#        # если нужно ещё и использование профиля, то:
+#        # classpath:/config/services/${spring.application.name}/application-${spring.profiles.active}.yaml
