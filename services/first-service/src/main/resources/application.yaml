@@ -1,11 +1,23 @@
 spring:
-  config:
-    import: configserver:http://localhost:8888
   application:
     name: first-service
   cloud:
     config:
+      discovery:
+        enabled: false
       fail-fast: true
       retry:
         useRandomPolicy: true
         max-interval: 6000
+      server:
+        git:
+          refreshRate: 10 # Проверять изменения каждые 10 секунд
+          uri: https://github.com/AlekseyGur/java-spring-examples.git
+          default-label: cloud-config-git # название ветки
+          searchPaths: configs/${spring.application.name}
+
+
+logging:
+  level:
+    #    root: DEBUG
+    org.springframework.cloud.config.server: DEBUG
