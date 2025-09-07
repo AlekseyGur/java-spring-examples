@@ -1,39 +1,31 @@
 services:
 
-  config-server:
-    container_name: config-server
-    build: ./config-server
+  consul:
+    image: consul:1.15
+    container_name: consul
     ports:
-      - 8888:8888 
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-  discovery-server:
-    container_name: discovery-server
-    build: ./discovery-server
-    ports:
-      - 8080:8080
-      - 8761:8761
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      - "8500:8500"
+      - "8600:8600/udp"
+    volumes:
+      - type: bind
+        source: ./config
+        target: /consul/config
+      # - ./configs:/consul/config # или так
+    command: >
+      agent
+      -client=0.0.0.0
+      -config-dir=/consul/config
+    # -dev # настройки профиля
+    # или так:
+    # command: agent -dev -client=0.0.0.0 -config-dir=/consul/config
 
   first-service:
     container_name: first-service
-    build: ./service/first-service
+    build: ./services/first-service
     ports:
       - 8080:8080
     depends_on:
-      config-server:
-        condition: service_healthy
-      discovery-server:
+      consul:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
@@ -44,13 +36,11 @@ services:
 
   second-service:
     container_name: second-service
-    build: ./service/second-service
+    build: ./services/second-service
     ports:
       - 8080:8080
     depends_on:
-      config-server:
-        condition: service_healthy
-      discovery-server:
+      consul:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
