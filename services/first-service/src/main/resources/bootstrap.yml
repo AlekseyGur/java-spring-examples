@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: first-service
+  cloud:
+    consul:
+      host: consul-server
+      port: 8500
+      # discovery:
+      #   Можно следующие две строки не указывать - тогда instance-id
+      #   сгенерирует сам консул:
+      #   instance-id: ${spring.application.name}-${random.uuid}
+      #   service-name: ${spring.application.name}
+      config:
+        format: YAML
+        prefix: config
+        data-key: application
+        name: ${spring.application.name}
+        label: default
+        import: |
+          config/common.yaml
+          config/services/${spring.application.name}.yaml
+        # если нужно ещё и использование профиля, то:
+        # classpath:/config/services/${spring.application.name}/application-${spring.profiles.active}.yaml
