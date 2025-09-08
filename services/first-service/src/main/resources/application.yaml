@@ -1,79 +1,27 @@
 server:
-  port: 8081 # ноль - случайный пустой порт
+  port: ${SERVER_PORT:80} # ноль - случайный пустой порт
 
 spring:
   application:
     name: first-service
-  config:
-    import: "configserver:"
   cloud:
-    config:
-      uri: http://config-server:8888
-      fail-fast: true
-      discovery:
-        enabled: false # отключаем по причине, указанной в README
-      retry:
-        useRandomPolicy: true
-        max-interval: 6000
-    openfeign:
+    kubernetes:
       client:
-        config:
-          default:
-            connectTimeout: 5000
-            readTimeout: 5000
-            loggerLevel: FULL
-            # NONE — логирование отключено
-            # BASIC — базовый уровень (запросы и ответы)
-            # HEADERS — включает логирование заголовков
-            # FULL — полное логирование запросов и ответов
-      # circuitbreaker:
-      #   enabled: true
-      #   alphanumeric-ids:
-      #     enabled: true
-
-eureka:
-  instance:
-    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  client:
-    healthcheck:
-      enabled: true
-    register-with-eureka: true
-    fetch-registry: true
-    serviceUrl:
-      defaultZone: ${DISCOVERY_SERVER_URL:"http://localhost:8888/eureka/"}
-
-# resilience4j:
-#   circuitbreaker:
-#     configs:
-#       default:
-#         enabled: true
-#         slidingWindowSize: 3
-#         failureRateThreshold: 2 # % неудачных срабатываний для открытия
-#         waitDurationInOpenState: 10s
-#         minimumNumberOfCalls: 2 # минимально необходимое количество успешных вызовов API перед началом анализа уровня отказа
-
-
-# actuator
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,circuitbreakers
-
-logging:
-  level:
-    root: INFO
-    com.github.resilience4j: DEBUG
-    org.springframework.web: DEBUG
-    feign: DEBUG
-    feign.client: DEBUG
-    feign.codec: DEBUG
-    org.springframework.cloud.netflix.feign: DEBUG
-
-feign:
-  logger:
-    level: FULL
-  client:
-    config:
-      default:
-        loggerLevel: FULL
+        connect-timeout: 10000ms   # Таймаут подключения к K8S API
+        read-timeout: 10000ms      # Таймаут чтения данных
+      reload:
+        enabled: true #  авто-перезагрузка
+      secrets: # Получение секретов
+        enabled: true # Включаем получение секретов
+        namespace: default # Имя пространства имен (namespace)
+        sources: # Список секретов
+          - name: db-secrets # Название секрета
+      config: # Загрузка конфигураций
+        enabled: true # Включаем чтение конфигураций из Kubernetes
+        namespace: default # Имя пространства имен (namespace)
+        sources: # Источники ConfigMap
+          - name: microservice-cfg # Название ConfigMap
+      discovery: # Сервис Discovery
+        enabled: true # Активируем механизм обнаружения сервисов
+        allNamespaces: false # Ограничиваем сканирование сервисов одним пространством имен
+        serviceNameResolverStrategy: SIMPLE # Простая стратегия разрешения имени сервиса

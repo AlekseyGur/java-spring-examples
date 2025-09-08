@@ -1,17 +1,29 @@
 package ru.alexgur.secondapp;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.alexgur.interactionapi.api.SecondServiceClient;
 import ru.alexgur.interactionapi.dto.ResponceDto;
 
+import java.util.UUID;
+
 @RestController
-@RequiredArgsConstructor
 public class Controller implements SecondServiceClient {
+
+    String uniqueInstanceID;
+
+    public Controller() {
+        this.uniqueInstanceID = UUID.randomUUID().toString();
+    }
+
+    @GetMapping("/")
+    public ResponceDto getEcho() {
+        return new ResponceDto("first-server", uniqueInstanceID, 200);
+    }
 
     @Override
     public ResponceDto getHello() {
-        String res = "Hello from second server! PID: " + ProcessHandle.current().pid();
+        String res = "Hello from second server! Server ID: " + uniqueInstanceID;
         return new ResponceDto("second-server",
                 res,
                 200);
