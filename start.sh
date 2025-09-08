@@ -5,6 +5,8 @@
 # sudo dpkg -i minikube_latest_amd64.deb
 # ставим kubectl:
 # apt/snap install kubectl --classic
+# ставим helm:
+# snap install helm --classic
 
 # создаём jar файлы
 sh mvnw clean package
@@ -18,8 +20,6 @@ minikube addons enable ingress
 eval $(minikube docker-env)
 
 # создаём образы (внутри minikube!), в которые добавляем jar Файлы для запуска
-docker build -t config-server:latest ./config-server
-docker build -t discovery-server:latest ./discovery-server
 docker build -t first-service:latest ./services/first-service
 docker build -t second-service:latest ./services/second-service
 
@@ -27,29 +27,20 @@ docker build -t second-service:latest ./services/second-service
 # docker images
 # docker ps -a
 
-# Если не выполнять eval $(minikube docker-env), то можно скопировать
-# образы в миникуб все образы так:
-# minikube image load discovery-server:latest
-# minikube image load config-server:latest
-# minikube image load first-service:latest
-# minikube image load second-service:latest
-
 # применяем конфиги Kubernetes и запускаем контейнеры
 kubectl create namespace my-microservice # создать пространство имен
 
 # 1 важность
-kubectl apply -f ./k8s/services/discovery-server/ -n my-microservice
+kubectl apply -f ./k8s/configs/ -n my-microservice
+kubectl apply -f ./k8s/secrets/ -n my-microservice
+kubectl apply -f ./k8s/roles/ -n my-microservice
 
 # 2 важность
-kubectl apply -f ./k8s/services/config-server/ -n my-microservice
-
-# 3 важность
 kubectl apply -f ./k8s/services/first-service/ -n my-microservice
 kubectl apply -f ./k8s/services/second-service/ -n my-microservice
 
-# 4 важность
-kubectl apply -f ./k8s/ingress/deployment.yaml -n my-microservice
-kubectl apply -f ./k8s/ingress/service.yaml -n my-microservice
+# 3 важность
+kubectl apply -f ./k8s/ingress/ -n my-microservice
 
 # проверяем результат
 # kubectl get pods -n my-microservice
@@ -65,8 +56,12 @@ kubectl apply -f ./k8s/ingress/service.yaml -n my-microservice
 
 # включаем доступы к ингресу извне
 # kubectl expose deployment web --type=NodePort --port=8080
-# #смотрим какие порты открыл ingress-nginx-controller
+
+# смотрим какие порты открыл ingress-nginx-controller
 # kubectl get svc -n ingress-nginx
+
+# логи гейта
+#kubectl logs -f -n ingress-nginx -l app.kubernetes.io/component=controller
 
 # Проверяем установку. Узнаём ip кластера
 # minikube ip

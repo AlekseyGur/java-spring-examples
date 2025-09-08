@@ -1,30 +1,5 @@
 services:
 
-  config-server:
-    container_name: config-server
-    build: ./config-server
-    ports:
-      - 8888:8888 
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-  discovery-server:
-    container_name: discovery-server
-    build: ./discovery-server
-    ports:
-      - 8080:8080
-      - 8761:8761
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
   first-service:
     container_name: first-service
     build: ./service/first-service
