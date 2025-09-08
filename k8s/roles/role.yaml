@@ -1,9 +1,0 @@
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: read-endpoints-role
-  namespace: my-microservice
-rules:
-  - apiGroups: [ "" ]  # Core API Group
-    resources: [ "services", "endpoints", "pods" ]
-    verbs: [ "get", "list", "watch" ]

@@ -1,3 +1,3 @@
-# k8s-helm-ingress-dns-configmap-secrets
+# security
 
-Заготовка для k8s-helm-ingress-dns-configmap-secrets
+Заготовка для spring security с загрузкой данных пользователей из базы данных

@@ -1,27 +1,18 @@
 server:
-  port: ${SERVER_PORT:80} # ноль - случайный пустой порт
+  port: 8080 # ноль - случайный пустой порт
 
 spring:
   application:
     name: first-service
-  cloud:
-    kubernetes:
-      client:
-        connect-timeout: 10000ms   # Таймаут подключения к K8S API
-        read-timeout: 10000ms      # Таймаут чтения данных
-      reload:
-        enabled: true #  авто-перезагрузка
-      secrets: # Получение секретов
-        enabled: true # Включаем получение секретов
-        namespace: default # Имя пространства имен (namespace)
-        sources: # Список секретов
-          - name: db-secrets # Название секрета
-      config: # Загрузка конфигураций
-        enabled: true # Включаем чтение конфигураций из Kubernetes
-        namespace: default # Имя пространства имен (namespace)
-        sources: # Источники ConfigMap
-          - name: microservice-cfg # Название ConfigMap
-      discovery: # Сервис Discovery
-        enabled: true # Активируем механизм обнаружения сервисов
-        allNamespaces: false # Ограничиваем сканирование сервисов одним пространством имен
-        serviceNameResolverStrategy: SIMPLE # Простая стратегия разрешения имени сервиса
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  sql:
+    init:
+      mode: always
+      schema: classpath:schema.sql
+      data: classpath:data.sql
