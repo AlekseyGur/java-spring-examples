@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microservice-cfg
+  namespace: my-microservice
+data:
+  application.properties: |-
+    management.endpoints.web.exposure.include=health,info,circuitbreakers
+    logging.level.root=INFO
+    logging.level.com.github.resilience4j=DEBUG
+    logging.level.org.springframework.web=DEBUG
+    logging.level.feign=DEBUG
+    logging.level.feign.client=DEBUG
+    logging.level.feign.codec=DEBUG
+    logging.level.org.springframework.cloud.netflix.feign=DEBUG
+    feign.logger.level=FULL
+    feign.client.config.default.loggerLevel=FULL

@@ -26,11 +26,3 @@ spec:
                 name: second-service
                 port:
                   number: 80
-                  
-          - path: /discovery-server(/|$)(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: discovery-server
-                port:
-                  number: 8761
