@@ -13,9 +13,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>services-interaction-api</module>
         <module>first-service</module>
         <module>second-service</module>
+        <module>services-interaction-api</module>
     </modules>
 
 </project>

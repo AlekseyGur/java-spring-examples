@@ -1,0 +1,222 @@
+---
+# Source: my-app/charts/common-configs/templates/db-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secrets
+  namespace: my-microservice
+type: Opaque
+stringData:
+  postgresql.username: admin
+  postgresql.password: very_secure_password_123
+---
+# Source: my-app/charts/common-configs/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microservice-cfg
+  namespace: my-microservice
+data:
+  application.properties: |-
+    management.endpoints.web.exposure.include=health,info,circuitbreakers
+    logging.level.root=INFO
+    logging.level.com.github.resilience4j=DEBUG
+    logging.level.org.springframework.web=DEBUG
+    logging.level.feign=DEBUG
+    logging.level.feign.client=DEBUG
+    logging.level.feign.codec=DEBUG
+    logging.level.org.springframework.cloud.netflix.feign=DEBUG
+    feign.logger.level=FULL
+    feign.client.config.default.loggerLevel=FULL
+---
+# Source: my-app/charts/common-configs/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: read-endpoints-role
+  namespace: my-microservice
+rules:
+  - apiGroups: [ "" ]  # Core API Group
+    resources:
+      - services
+      - endpoints
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+---
+# Source: my-app/charts/common-configs/templates/role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-endpoints-binding
+  namespace: my-microservice
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: my-microservice
+roleRef:
+  kind: Role
+  name: read-endpoints-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: my-app/charts/first-service/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: first-service
+  namespace: my-microservice
+spec:
+  type: ClusterIP
+  selector:
+    app: first-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+# Source: my-app/charts/ingress/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-nginx-service
+  namespace: my-microservice
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort:
+---
+# Source: my-app/charts/second-service/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: second-service
+  namespace: my-microservice
+spec:
+  selector:
+    app: second-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+# Source: my-app/charts/first-service/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: first-service
+  namespace: my-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: first-service
+  template:
+    metadata:
+      labels:
+        app: first-service
+    spec:
+      containers:
+        - name: first-service
+          image: first-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          resources:
+            limits:
+              memory: 1024Mi
+              cpu: 1
+            requests:
+              memory: 512Mi
+              cpu: 0.5
+          envFrom:
+            - configMapRef:
+                name: microservice-cfg
+            - secretRef:
+                name: db-secrets
+---
+# Source: my-app/charts/second-service/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: second-service
+  namespace: my-microservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: second-service
+  template:
+    metadata:
+      labels:
+        app: second-service
+    spec:
+      containers:
+        - name: second-service
+          image: second-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          resources:
+            limits:
+              memory: 1024Mi
+              cpu: 1
+            requests:
+              memory: 512Mi
+              cpu: 0.5
+          envFrom:
+            - configMapRef:
+                name: microservice-cfg
+            - secretRef:
+                name: db-secrets
+---
+# Source: my-app/charts/ingress/templates/deployment.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-nginx-deployment
+  namespace: my-microservice
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: true
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /first-service(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: first-service
+                port:
+                  number: 80
+          - path: /second-service(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: second-service
+                port:
+                  number: 80

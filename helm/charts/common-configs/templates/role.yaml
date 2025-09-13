@@ -5,5 +5,11 @@ metadata:
   namespace: my-microservice
 rules:
   - apiGroups: [ "" ]  # Core API Group
-    resources: [ "services", "endpoints", "pods" ]
-    verbs: [ "get", "list", "watch" ]
+    resources:
+      - services
+      - endpoints
+      - pods
+    verbs:
+      - get
+      - list
+      - watch

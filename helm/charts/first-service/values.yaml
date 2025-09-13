@@ -1,0 +1,48 @@
+# Общие настройки сервиса
+serviceName: first-service
+namespace: my-microservice
+
+# Настройки деплоймента
+replicas: 1
+image:
+  name: first-service
+  tag: latest
+  pullPolicy: Never
+
+# Настройки портов
+containerPort: 80
+servicePort: 80
+
+# Настройки health check
+livenessProbe:
+  path: /actuator/health
+  port: 80
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  timeoutSeconds: 10
+  failureThreshold: 3
+
+# Ресурсы
+resources:
+  limits:
+    memory: "1024Mi"
+    cpu: "1"
+  requests:
+    memory: "512Mi"
+    cpu: "0.5"
+
+# Конфигурационные карты и секреты
+configMaps:
+  name: microservice-cfg
+secrets:
+  name: db-secrets
+
+# Настройки сервиса
+service:
+  type: ClusterIP
+  selector:
+    app: first-service
+  ports:
+    protocol: TCP
+    port: 80
+    targetPort: 80

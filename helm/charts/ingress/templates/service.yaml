@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.service.name }}
+  namespace: {{.Values.namespace }}
+spec:
+  type: {{.Values.service.type }}
+  selector:
+    app.kubernetes.io/name: {{.Values.service.selector.app_kubernetes_io_name }}
+    app.kubernetes.io/part-of: {{.Values.service.selector.app_kubernetes_io_part_of }}
+  ports:
+    - name: {{.Values.service.ports.name }}
+      port: {{.Values.service.ports.port }}
+      targetPort: {{.Values.service.ports.targetPort }}

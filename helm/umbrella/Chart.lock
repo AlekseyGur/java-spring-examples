@@ -1,0 +1,15 @@
+dependencies:
+- name: common-configs
+  repository: file://../charts/common-configs
+  version: 0.1.0
+- name: first-service
+  repository: file://../charts/first-service
+  version: 0.1.0
+- name: ingress
+  repository: file://../charts/ingress
+  version: 0.1.0
+- name: second-service
+  repository: file://../charts/second-service
+  version: 0.1.0
+digest: sha256:8c3fbb82336cf41d03d7888f84a939669e91217263fc98b1140b6a130f97123d
+generated: "2025-09-11T19:58:05.485374451+03:00"

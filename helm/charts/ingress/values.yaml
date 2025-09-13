@@ -1,0 +1,32 @@
+# Общие настройки Ingress
+ingressName: ingress-nginx-deployment
+namespace: my-microservice
+
+# Настройки аннотаций
+annotations:
+  rewriteTarget: "/$2"
+  useRegex: "true"
+
+# Настройки Ingress Class
+ingressClassName: nginx
+
+# Конфигурация путей
+paths:
+  - path: /first-service(/|$)(.*)
+    serviceName: first-service
+    port: 80
+
+  - path: /second-service(/|$)(.*)
+    serviceName: second-service
+    port: 80
+
+# Настройки сервиса
+service:
+  name: ingress-nginx-service
+  type: NodePort
+  selector:
+    app_kubernetes_io_name: ingress-nginx
+    app_kubernetes_io_part_of: ingress-nginx
+  ports:
+    name: http
+    port: 80

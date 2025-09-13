@@ -1,0 +1,13 @@
+apiVersion: v2
+name: second-service
+version: 0.1.0
+description: Second service chart
+appVersion: "1.0"
+
+dependencies:
+  - name: ingress
+    version: 0.1.0
+    repository: file://../charts/ingress
+  - name: common-configs
+    version: 0.1.0
+    repository: file://../charts/common-configs

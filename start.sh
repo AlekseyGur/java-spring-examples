@@ -19,70 +19,29 @@ minikube addons enable ingress
 # minikube для доступа через docker команду
 eval $(minikube docker-env)
 
+kubectl cluster-info # информация о кластере
+
 # создаём образы (внутри minikube!), в которые добавляем jar Файлы для запуска
 docker build -t first-service:latest ./services/first-service
 docker build -t second-service:latest ./services/second-service
 
-# проверяем загруженные в minikube образы и запущенные контейнеры
-# docker images
-# docker ps -a
+# создать пространство имен
+kubectl create namespace my-microservice
 
-# применяем конфиги Kubernetes и запускаем контейнеры
-kubectl create namespace my-microservice # создать пространство имен
+# готовим helm umbrella
+helm dependency update helm/umbrella/.
+helm lint helm/umbrella/.
 
-# 1 важность
-kubectl apply -f ./k8s/configs/ -n my-microservice
-kubectl apply -f ./k8s/secrets/ -n my-microservice
-kubectl apply -f ./k8s/roles/ -n my-microservice
+# вместо my-release можно поставить любое название
+helm install my-release helm/umbrella/.
+helm install my-release helm/umbrella/. --dry-run --debug # режим отладки
 
-# 2 важность
-kubectl apply -f ./k8s/services/first-service/ -n my-microservice
-kubectl apply -f ./k8s/services/second-service/ -n my-microservice
-
-# 3 важность
-kubectl apply -f ./k8s/ingress/ -n my-microservice
-
-# проверяем результат
-# kubectl get pods -n my-microservice
-# kubectl get services -n my-microservice
-# kubectl get all -n my-microservice
-# kubectl get networkpolicy -n my-microservice
-
-# проверяем гейт
-# kubectl describe ingress allow-config-access -n my-microservice
-
-# пробрасываем порт от родительской машины к машине внутри кластера
-# kubectl port-forward svc/discovery-server 8761:8761 -n my-microservice
-
-# включаем доступы к ингресу извне
-# kubectl expose deployment web --type=NodePort --port=8080
-
-# смотрим какие порты открыл ingress-nginx-controller
-# kubectl get svc -n ingress-nginx
-
-# логи гейта
-#kubectl logs -f -n ingress-nginx -l app.kubernetes.io/component=controller
-
-# Проверяем установку. Узнаём ip кластера
-# minikube ip
-
-# Удаление всех подов
-# kubectl delete pods --all -n my-microservice
-
-# Удаление всех деплойментов
-# kubectl delete deployments --all -n my-microservice
-
-# Удаление всех сервисов
-# kubectl delete services --all -n my-microservice
-
-# Удаление всех ingress
-# kubectl delete ingress --all -n my-microservice
-
-# Удаление всех statefulsets (если есть)
-# kubectl delete statefulsets --all -n my-microservice
-
-# Удаление всех jobs (если есть)
-# kubectl delete jobs --all -n my-microservice
+helm list # Просмотр всех релизов
+helm status my-release # проверка статуса
+# helm rollback my-release <версия>  # Откат к предыдущей версии
+# helm upgrade my-release helm/umbrella/. # Обновление
+# helm uninstall my-release # Удаление
+kubectl rollout restart deployments -n my-microservice # переустановка
 
 # останавливаем и удаляем окружение
 # minikube stop

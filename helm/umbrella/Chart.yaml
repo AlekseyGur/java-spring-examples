@@ -1,0 +1,19 @@
+apiVersion: v2
+name: my-app
+description: Umbrella chart to deploy all microservices
+type: application
+version: 0.1.0
+icon: data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==
+dependencies:
+  - name: common-configs
+    version: 0.1.0
+    repository: file://../charts/common-configs
+  - name: first-service
+    version: 0.1.0
+    repository: file://../charts/first-service
+  - name: ingress
+    version: 0.1.0
+    repository: file://../charts/ingress
+  - name: second-service
+    version: 0.1.0
+    repository: file://../charts/second-service

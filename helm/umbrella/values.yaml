@@ -1,0 +1,46 @@
+global:
+  namespace: my-microservice
+
+# Common Configurations
+commonConfigs:
+  postgresqlUsername: admin
+  postgresqlPassword: securepassword123
+
+# Ingress Settings
+ingress:
+  enabled: true
+  hosts:
+    - host: example.com
+      paths:
+        - path: "/"
+          pathType: Prefix
+
+# First Service
+firstService:
+  replicaCount: 1
+  image:
+    repository: first-service
+    tag: latest
+    pullPolicy: Never
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+    requests:
+      memory: "512Mi"
+      cpu: "0.5"
+
+# Second Service
+secondService:
+  replicaCount: 2
+  image:
+    repository: second-service
+    tag: latest
+    pullPolicy: Never
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+    requests:
+      memory: "512Mi"
+      cpu: "0.5"
